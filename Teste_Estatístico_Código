@@ -1,0 +1,52 @@
+install.packages('dplyr')
+library(dplyr)
+library(readr)
+
+countries_table <- read_csv("countries-table.csv")
+View(countries_table)
+
+#Variancias Diferentes
+
+# Coletando as amostras das populações em 2000 e 2010
+
+p2000 <- countries_table$pop2000
+p2010 <- countries_table$pop2010
+
+# Calculando as médias das amostras
+
+media_2000 <- mean(p2000)
+media_2010 <- mean(p2010)
+
+# Calculando a diferença entre as médias
+
+media_diff <- media_2000 - media_2010
+
+# Obtendo o tamanho das amostras
+
+l2000 = length(p2000)
+l2010 = length(p2010)
+
+# Calculando as variâncias amostrais (dividindo a variância total pelo tamanho da amostra)
+
+s1_2000 <- var(p2000) / l2000
+s1_2010 <- var(p2010) / l2010
+
+# Calculando a estatística t, que é a diferença entre as médias dividida pelo desvio padrão combinado das amostras
+
+t0 = (media_diff - 0) / (sqrt(s1_2000 + s1_2010))
+
+# Calculando o grau de liberdade para o teste t
+
+gl_cima = (s1_2000 + s1_2010)^2 
+gl_baixo = (s1_2000^2) / (l2000 - 1) + (s1_2010^2) / (l2010 - 1)
+gl_total = gl_cima / gl_baixo
+
+# Calculando o p-valor associado ao teste t
+
+ate_t0 <- pt(t0, df = gl_total)
+p_value <- 2 * (ate_t0)
+
+# Realizando o teste t usando a função t.test() do R
+
+t.test(p2000, p2010)
+
